@@ -1,7 +1,7 @@
 import frisby from 'frisby';
 import { baseURL } from './categories';
 
-describe('UsedCars', () => {
+describe('UsedCars Category', () => {
   const usedCarsURL = `${baseURL}/UsedCars.json`;
 
   it('should return 76 brands of cars', () => {
@@ -13,31 +13,26 @@ describe('UsedCars', () => {
       });
   });
 
-  it("brand 'Kia' should exists and its number should be 1", () => {
+  it(`should exists a brand called 'Kia', its count should be 1`, () => {
     return frisby
       .get(`${usedCarsURL}?with_counts=true`)
       .expect('status', 200)
       .then((res) => {
-        const kiaExist = res.json.Subcategories.some(
-          ({ Name }) => Name === 'Kia'
-        );
-        expect(kiaExist).toBe(true);
-
         const kia = res.json.Subcategories.find(({ Name }) => Name === 'Kia');
-        const { Count } = kia;
-        expect(Count).toBe(1);
+        expect(kia).toBeTruthy();
+        expect(kia.Count).toBe(1);
       });
   });
 
-  it('‘Hispano Suiza’ does not exist', () => {
+  it(`should not contains brand named 'Hispano Suiza'`, () => {
     return frisby
       .get(usedCarsURL)
       .expect('status', 200)
       .then((res) => {
-        const hispanoSuizaExist = res.json.Subcategories.some(
+        const hispanoSuiza = res.json.Subcategories.find(
           ({ Name }) => Name === 'Hispano Suiza'
         );
-        expect(hispanoSuizaExist).toBe(false);
+        expect(hispanoSuiza).toBeFalsy();
       });
   });
 });
